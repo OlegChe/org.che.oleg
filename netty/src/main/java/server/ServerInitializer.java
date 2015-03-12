@@ -1,5 +1,6 @@
 package server;
 
+import server.handler.GlobalTrafficHandler;
 import server.handler.RequestHandler;
 import server.handler.StatisticHandler;
 import io.netty.channel.ChannelInitializer;
@@ -16,6 +17,7 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 		
 		pipeline.addLast("decoder", new HttpRequestDecoder());
 	    pipeline.addLast("encoder", new HttpResponseEncoder());
+	    pipeline.addLast("traffic", GlobalTrafficHandler.getInstance());
 		pipeline.addLast("collector", StatisticHandler.getInstance());
 		pipeline.addLast("handler", new RequestHandler());
 	}

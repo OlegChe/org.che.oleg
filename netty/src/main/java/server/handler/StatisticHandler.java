@@ -69,10 +69,16 @@ public class StatisticHandler extends SimpleChannelInboundHandler<HttpRequest>
 	}
 	
 	private void setStatConnects(ChannelHandlerContext ctx, HttpRequest msg) {
-		statConnects.add(createEntry(ctx, msg, msg.toString().getBytes().length, 0, 0));
+		statConnects.add(createEntry(ctx, msg));
 		if (statConnects.size() > STAT_CONNECTS_CAPACITY) {
 			statConnects.remove(0);
 		}
+	}
+	
+	public void setStatConnectsTraffic(long receive, long sent, long throughput) {
+		int index = statConnects.size() - 1;
+		StatEntry stat = statConnects.get(index);
+		statConnects.set(index, new StatEntry(stat.getUrl(), stat.getIp(), stat.getTimestamp(), (int) receive, (int) sent, (int) throughput));
 	}
 
 	private void setStatCommon(ChannelHandlerContext ctx, HttpRequest msg) {
@@ -147,7 +153,7 @@ public class StatisticHandler extends SimpleChannelInboundHandler<HttpRequest>
 		contentStat.append("</td><td></td><td></td></tr><tr/><td valign=\"top\">");
 		// Build table RRP
 		contentStat.append("<center>Recent requests processed</center>");
-		contentStat.append("<center><table border = 1><tr><th>IP Address</th><th>URL</th><th>Timestamp</th><th>Sent bytes</th><th>Received bytes</th><th>Speed, bytes/sec</th></tr>");
+		contentStat.append("<center><table border = 1><tr><th>IP Address</th><th>URL</th><th>Request time</th><th>Received bytes</th><th>Sent bytes</th><th>Speed, bytes/sec</th></tr>");
 		contentStat.append("<tbody>");
 		for (StatEntry statEntry : statConnects) {
 			contentStat.append("<tr><td>" + statEntry.getIp() + "</td><td>" + statEntry.getUrl() + "</td><td>" + DateFormat.getDateTimeInstance().format(statEntry.getTimestamp()) + "</td><td>"+ statEntry.getReceiveByte() + "</td><td>"+ statEntry.getSentByte() + "</td><td>"+ statEntry.getThroughput() + "</td></tr>");
@@ -184,9 +190,9 @@ public class StatisticHandler extends SimpleChannelInboundHandler<HttpRequest>
 		return value;
 	}
 	
-	public StatEntry createEntry(ChannelHandlerContext ctx, HttpRequest msg, Integer receiveBytes, Integer sentBytes, Integer throughput) {
+	public StatEntry createEntry(ChannelHandlerContext ctx, HttpRequest msg) {
 		String remoteHost = urlUtils.getIP(ctx);
-		return new StatEntry(msg.getUri(), remoteHost, System.currentTimeMillis(), receiveBytes, sentBytes, throughput);
+		return new StatEntry(msg.getUri(), remoteHost, System.currentTimeMillis(), 0, 0, 0);
 	}
 
 	private UniqueIPEntry createUniqIPEntry(ChannelHandlerContext ctx,
