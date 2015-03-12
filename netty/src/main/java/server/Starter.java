@@ -4,7 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Starter {
-	// its starter
+
     private static HttpServer httpServer;
 
     public static void main(String[] args) {
