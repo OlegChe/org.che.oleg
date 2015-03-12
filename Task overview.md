@@ -26,7 +26,7 @@ src_ip, URI, timestamp,  sent_bytes, received_bytes, speed (bytes/sec)
 Основным обработчиком является RequestHandler, который в зависимости от запроса извлекает из менеджера обработчиков (enum
 URL_ADDRESS) ссылку на требуемый обработчик и вызывает метод handle().
    Все классы пакета server.handler реализуют интерфейс CustomHandler. Класс StatisticHandler также наследует класс 
-SimpleChannelInboundHandler, параметризированый HttpRequest, для обратного вызова метода channelRead0(). StatisticHandler 
+SimpleChannelInboundHandler, параметризированный HttpRequest, для обратного вызова метода channelRead0(). StatisticHandler 
 реализует шаблон Singleton, хранит состояние статистики и помечен аннотацией @Sharable.
    Для корректной работы сервера в конструкторе основной группы (EventLoopGroup bossGroup) указано количество потоков в виде
 количества доступных процессоров, при инициализации рабочей группы (EventLoopGroup workerGroup) нужно указать количество 
