@@ -22,9 +22,8 @@ src_ip, URI, timestamp,  sent_bytes, received_bytes, speed (bytes/sec)
 Особенности реализации
 
    В ChannelPipeLine добавлены обработчики HttpRequestDecoder, HttpResponseEncoder для возможности работы с Http-объектами.
-Также добавлен обработчик StatisticHandler, который ведет учет статистики и предоставляет отчет в виде html-страницы. 
-Основным обработчиком является RequestHandler, который в зависимости от запроса извлекает из менеджера обработчиков (enum
-URL_ADDRESS) ссылку на требуемый обработчик и вызывает метод handle().
+Также добавлен обработчик StatisticHandler, который ведет учет статистики и предоставляет отчет в виде html-страницы.
+Подсчет статистики ведется с помощью класса-обработчика ClobalTrafficSnapingHandler. Основным обработчиком является RequestHandler, который в зависимости от запроса извлекает из менеджера обработчиков (enum URL_ADDRESS) ссылку на требуемый обработчик и вызывает метод handle().
    Все классы пакета server.handler реализуют интерфейс CustomHandler. Класс StatisticHandler также наследует класс 
 SimpleChannelInboundHandler, параметризированный HttpRequest, для обратного вызова метода channelRead0(). StatisticHandler 
 реализует шаблон Singleton, хранит состояние статистики и помечен аннотацией @Sharable.
@@ -32,4 +31,3 @@ SimpleChannelInboundHandler, параметризированный HttpRequest,
 количества доступных процессоров, при инициализации рабочей группы (EventLoopGroup workerGroup) нужно указать количество 
 потоков в 2 раза больше, чем потоков основной группы.
    По умолчанию сервер работает через порт 8080.
-   Подсчет исходящих данных и скорости не ведется (нужно использовать GlobalTrafficShapingHandler, но я с ним не разобрался).
